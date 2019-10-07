@@ -1,0 +1,28 @@
+{
+	"env": {
+		"browser": true,
+		"es6": true,
+		"node": true
+	},
+	"parserOptions": {
+		"parser": "babel-eslint"
+	},
+	"extends": [
+		"airbnb-base",
+		"plugin:vue/recommended",
+		"prettier/vue",
+		"plugin:prettier/recommended"
+	],
+	"rules": {
+		"vue/component-name-in-template-casing": ["error", "PascalCase"],
+		"import/no-unresolved": 0,
+		"vue/html-self-closing": 0,
+		"quotes": ["error", "single"],
+		"prettier/prettier": ["error", { 
+			"singleQuote": true,
+			"useTabs": true,
+			"tabWidth": 2,
+			"trailingComma": "es5"
+		}]
+	}
+}
