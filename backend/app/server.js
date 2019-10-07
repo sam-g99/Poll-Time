@@ -20,6 +20,7 @@ app.use(morgan('combined'));
 app.get('/', (req, res) => {
   res.send('Poll Time API');
 });
+app.use('/', require('./routes/polls'));
 
 // Start server
 database.sync().then(() => {
