@@ -8,17 +8,17 @@ import Create from './pages/Create';
 Vue.use(Router);
 
 const router = new Router({
-	mode: 'history',
-	routes: [
-		{
-			path: '/',
-			component: Home,
-		},
-		{
-			path: '/create',
-			component: Create,
-		},
-	],
+  mode: 'history',
+  routes: [
+    {
+      path: '/',
+      component: Home,
+    },
+    {
+      path: '/create',
+      component: Create,
+    },
+  ],
 });
 
 export default router;

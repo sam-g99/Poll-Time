@@ -9,7 +9,7 @@ import '@/assets/css/layout.css';
 Vue.config.productionTip = false;
 Vue.use(VueAxios, axios);
 new Vue({
-	store,
-	router,
-	render: h => h(App),
+  store,
+  router,
+  render: h => h(App),
 }).$mount('#app');

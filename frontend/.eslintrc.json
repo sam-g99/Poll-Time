@@ -21,7 +21,7 @@
 		"quotes": ["error", "single"],
 		"prettier/prettier": ["error", { 
 			"singleQuote": true,
-			"useTabs": true,
+			"useTabs": false,
 			"tabWidth": 2,
 			"trailingComma": "es5"
 		}]
