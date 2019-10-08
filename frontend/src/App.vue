@@ -1,12 +1,16 @@
 <template>
 	<div id="App">
+		<Alert />
 		<router-view></router-view>
 	</div>
 </template>
 
 <script>
+import Alert from '@/components/Alert';
+
 export default {
 	name: 'App',
+	components: { Alert },
 };
 </script>
 

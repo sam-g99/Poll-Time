@@ -1,19 +1,7 @@
 <template>
 	<div class="container">
-		<div>
-			<h1>Sam's Vue Boilerplate</h1>
-			<p>Airbnb style guide</p>
-			<p>{{ this.$store.state.hello }}</p>
-			<p>{{ mapped }}</p>
-			<router-link to="page2"> Page 2 </router-link> <br />
-			<a
-				href="https://github.com/sam-g99/personal-vue-boilerplate"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				Go to Repo
-			</a>
-		</div>
+		<h1>Hey create a poll.</h1>
+		<router-link to="create">Get started</router-link>
 	</div>
 </template>
 

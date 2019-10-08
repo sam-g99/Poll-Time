@@ -17,6 +17,7 @@
 		"vue/component-name-in-template-casing": ["error", "PascalCase"],
 		"import/no-unresolved": 0,
 		"vue/html-self-closing": 0,
+		"vue/attribute-hyphenation": 0,
 		"quotes": ["error", "single"],
 		"prettier/prettier": ["error", { 
 			"singleQuote": true,

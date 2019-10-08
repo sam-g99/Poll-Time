@@ -3,7 +3,7 @@ import Router from 'vue-router';
 
 // Pages
 import Home from './pages/Home';
-import Page2 from './pages/Page2';
+import Create from './pages/Create';
 
 Vue.use(Router);
 
@@ -15,8 +15,8 @@ const router = new Router({
 			component: Home,
 		},
 		{
-			path: '/page2',
-			component: Page2,
+			path: '/create',
+			component: Create,
 		},
 	],
 });
