@@ -18,13 +18,16 @@ app.use(morgan('combined'));
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('Poll Time API');
+  res.send('You stumbled upon the Poll Time API');
 });
 app.use('/', require('./routes/polls'));
 
 // Start server
-database.sync().then(() => {
-  app.listen(server.port, () => {
-    console.log(`Api is running on port ${server.port}`);
-  });
-});
+database
+  .sync()
+  .then(() => {
+    app.listen(server.port, () => {
+      console.log(`Api is running on port ${server.port}`);
+    });
+  })
+  .catch(error => console.log(error));
