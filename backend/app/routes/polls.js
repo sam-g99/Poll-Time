@@ -15,7 +15,7 @@ router.post('/create-poll', async (req, res) => {
   const { question } = req.body;
   const options = ['option 1', 'option 2'];
   const pollId = shortid.generate();
-  const creatorCode = crypto.randomBytes(25).toString('hex');
+  const creatorCode = crypto.randomBytes(15).toString('hex');
   // Creating the poll
   Poll.create({
     question,
@@ -39,7 +39,30 @@ router.post('/create-poll', async (req, res) => {
 });
 
 router.get('/view-poll', async (req, res) => {
-  res.send({ test: 'Trying to view a poll i see' });
+  const { pollId } = req.body;
+  Poll.findOne({
+    where: { pollId }
+  })
+    .then(poll => {
+      // Successfully found
+      if (poll) {
+        const options = poll.options.join(' or ');
+        res.send(
+          `Poll question is ${poll.question} and the (options are ${options})`
+        );
+      }
+      // Poll was not found
+      else {
+        res
+          .status(404)
+          .send(
+            "The poll you're looking for either never existed or was deleted by the creator"
+          );
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
 });
 
 router.post('/answer-poll', async (req, res) => {
