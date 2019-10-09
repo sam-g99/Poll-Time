@@ -8,32 +8,33 @@ const router = express.Router();
 const shortid = require('shortid');
 
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const Poll = require('../database/models/poll');
-const Result = require('../database/models/result');
+const Vote = require('../database/models/vote');
 
 // CREATE
 
 router.post('/create-poll', async (req, res) => {
   // Setting up inputs and Id
-  const { question } = req.body;
-  const options = ['option 1', 'option 2'];
+  const { question, options } = req.body;
   const pollId = shortid.generate();
   const creatorCode = crypto.randomBytes(15).toString('hex');
+  // We need to protect those creator codes ;)
+  const encryptedCreatorCode = await new Promise((resolve, reject) => {
+    bcrypt.hash(creatorCode, 12, (err, hash) => {
+      if (err) reject(err);
+      resolve(hash);
+    });
+  });
   // Creating the poll
   Poll.create({
     question,
     options,
-    creatorCode,
+    creatorCode: encryptedCreatorCode,
     pollId
   })
     // Success
-    .then(() =>
-      res
-        .status(201)
-        .send(
-          `You have created a poll. Your poll id is ${pollId} share it, your creator code is ${creatorCode} hide it. `
-        )
-    )
+    .then(() => res.status(201).send({ pollId, creatorCode }))
     // Error
     .catch(error => {
       res.status(400);
@@ -44,18 +45,14 @@ router.post('/create-poll', async (req, res) => {
 // VIEW
 
 router.get('/view-poll', async (req, res) => {
-  const { pollId } = req.body;
+  const { pollId } = req.query;
   Poll.findOne({
     where: { pollId }
   }).then(poll => {
     // Successfully found
     if (poll) {
-      const options = poll.options.join(' or ');
-      res
-        .status(201)
-        .send(
-          `Poll question is ${poll.question} and the options are (${options})`
-        );
+      const { question, options } = poll;
+      res.status(201).send({ question, options });
     }
     // Poll was not found
     else {
@@ -76,7 +73,7 @@ router.post('/answer-poll', async (req, res) => {
     where: { pollId }
   }).then(poll => {
     if (poll) {
-      Result.create({
+      Vote.create({
         chose, // change to answer
         pollId
       }).then(() => {
@@ -92,10 +89,10 @@ router.post('/answer-poll', async (req, res) => {
 // RESULTS
 router.get('/poll-results', async (req, res) => {
   const { pollId } = req.body;
-  Result.findAll({
+  Vote.findAll({
     where: { pollId }
-  }).then(results => {
-    const answers = results.map(r => r.chose);
+  }).then(votes => {
+    const answers = votes.map(r => r.chose);
     console.log(answers.join(' '));
   });
   res.status(201).send('results');

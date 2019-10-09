@@ -2,7 +2,7 @@ const { STRING } = require('sequelize');
 
 const database = require('..');
 
-const Result = database.define('Results', {
+const Vote = database.define('Vote', {
   chose: {
     type: STRING
   },
@@ -11,4 +11,4 @@ const Result = database.define('Results', {
   }
 });
 
-module.exports = Result;
+module.exports = Vote;

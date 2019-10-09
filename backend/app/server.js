@@ -3,11 +3,12 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+
+const app = express(); // Define express app
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 const { server } = require('./config');
 const database = require('./database');
-
-// Define express app
-const app = express();
 
 // Middleware
 app.use(helmet());
@@ -22,11 +23,25 @@ app.get('/', (req, res) => {
 });
 app.use('/', require('./routes/polls'));
 
+io.on('connection', socket => {
+  socket.on('poll', data => {
+    console.log(data);
+    socket.join(data);
+    // eslint-disable-next-line dot-notation
+    const clients = io.sockets.adapter.rooms['test'].sockets;
+    const numClients =
+      typeof clients !== 'undefined' ? Object.keys(clients).length : 0;
+    console.log(numClients);
+    io.to('test').emit('reallyimportantupdate', numClients);
+  });
+
+  console.log('a user is connected');
+});
 // Start server
 database
   .sync()
   .then(() => {
-    app.listen(server.port, () => {
+    http.listen(server.port, () => {
       console.log(`Api is running on port ${server.port}`);
     });
   })
