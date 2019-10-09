@@ -16,9 +16,9 @@
         />
         <label :for="index">{{ option }}</label>
       </div>
-
       <br />
     </div>
+    <button @click="submitVote">Submit Vote</button>
   </div>
 </template>
 
@@ -30,6 +30,7 @@ export default {
     return {
       question: '',
       options: [],
+      vote: Number,
     };
   },
   computed: {
@@ -47,6 +48,22 @@ export default {
         this.question = question;
         this.options = options;
       });
+  },
+  methods: {
+    submitVote() {
+      this.axios
+        .post(`${this.api}answer-poll`, {
+          vote: this.vote,
+          pollId: this.$route.params.id,
+        })
+        .then(r => {
+          if (r.data.success) {
+            this.$store.state.alert = 'Your vote was submitted successfully';
+          } else {
+            this.$store.state.alert = 'Sorry error';
+          }
+        });
+    },
   },
 };
 </script>
