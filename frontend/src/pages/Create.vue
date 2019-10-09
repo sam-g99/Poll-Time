@@ -6,6 +6,7 @@
         id="question"
         type="text"
         name="question"
+        autocomplete="off"
         placeholder="Enter your question"
         @keyup="registerQuestion"
       />
@@ -16,12 +17,15 @@
           :key="index"
           type="text"
           name="question"
+          autocomplete="off"
           placeholder="Enter your option"
           @keyup="updateOption(index, $event)"
         />
       </div>
       <button @click="addOption">add option</button><br />
-      <button class="create-poll" @click="createPoll">Create Poll</button>
+      <button class="button-create-poll" @click="createPoll">
+        Create Poll
+      </button>
     </div>
     <PollInfo v-if="submitted" :pollId="pollId" :creatorCode="creatorCode" />
   </div>
@@ -88,16 +92,38 @@ export default {
 }
 
 input {
-  display: block;
-}
-
-.create-poll {
-  background: gold;
+  background: #f1f1f1;
   border: none;
-  cursor: pointer;
-  font-weight: bold;
+  color: #525151;
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
   margin-top: 10px;
   outline: none;
   padding: 10px;
+  width: 100%;
+}
+
+::placeholder {
+  color: #525151;
+}
+
+.creation-container {
+  margin: 0 auto;
+  margin-top: 300px;
+  max-width: 600px;
+
+  .button-create-poll {
+    background: $green;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    margin-top: 10px;
+    outline: none;
+    padding: 10px;
+    width: 100%;
+  }
 }
 </style>

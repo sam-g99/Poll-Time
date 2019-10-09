@@ -2,13 +2,20 @@
   "extends": "stylelint-config-standard",
   "plugins": [
     "stylelint-order",
-    "stylelint-scss"
+    "stylelint-scss",
+    "stylelint-prettier"
   ],
   "rules": {
-      "order/order": [
+      "order/order": [ 
+        [
           "custom-properties",
           "declarations"
+        ],
+        {
+          "disableFix": false
+        }
       ],
+      "prettier/prettier": true,
       "order/properties-alphabetical-order": true,
       "string-quotes": "single",
       "number-leading-zero": "always",
