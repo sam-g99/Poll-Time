@@ -110,7 +110,7 @@ input {
 
 .creation-container {
   margin: 0 auto;
-  margin-top: 300px;
+  margin-top: 100px;
   max-width: 600px;
 
   .button-create-poll {

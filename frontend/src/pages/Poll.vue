@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Results />
     <h1>{{ question }}</h1>
     <div class="options">
       <div
@@ -24,8 +25,12 @@
 
 <script>
 import { mapState } from 'vuex';
+import Results from '@/components/Results';
 
 export default {
+  components: {
+    Results,
+  },
   data() {
     return {
       question: '',
@@ -53,7 +58,7 @@ export default {
     submitVote() {
       this.axios
         .post(`${this.api}answer-poll`, {
-          vote: this.vote,
+          chose: this.vote,
           pollId: this.$route.params.id,
         })
         .then(r => {

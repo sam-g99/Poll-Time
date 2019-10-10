@@ -1,7 +1,12 @@
 <template>
   <div class="results">
     <h3>Your poll has been created</h3>
-    <p class="id"><b> Poll ID:</b> {{ pollId }}</p>
+    <p class="id">
+      <b>Poll Link:</b>
+      <router-link :to="`/poll/${pollId}`">
+        {{ `${baseUrl}/poll/${pollId}` }}
+      </router-link>
+    </p>
     <p class="code">
       <b>Creator Code:</b> {{ creatorCode }} (Do not share this, use this to
       manage your poll)
@@ -15,6 +20,14 @@ export default {
   props: {
     pollId: { type: String, default: '' },
     creatorCode: { type: String, default: '' },
+  },
+  data: () => {
+    return {
+      baseUrl: '',
+    };
+  },
+  mounted() {
+    this.baseUrl = window.location.origin;
   },
 };
 </script>

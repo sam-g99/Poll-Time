@@ -1,8 +1,16 @@
 <template>
   <div>
-    <h1>{{ test }}</h1>
-    <input type="text" placeholder="enter room id" @keyup="room" />
-    <button @click="ping">Test Socket</button>
+    <h1>{{ question }}</h1>
+    {{ chose }}
+    <div v-for="(option, index) in options" :key="index">{{ option }}</div>
+    <p>for poll {{ this.$route.params.id }}</p>
+    <p>
+      <!-- {{
+        test - 1 === 0
+          ? 'You are the only person viewing the results'
+          : `whaterv other people are viewing the results`
+      }} -->
+    </p>
   </div>
 </template>
 
@@ -12,15 +20,21 @@ import io from 'socket.io-client';
 export default {
   data() {
     return {
-      test: '',
+      question: '',
+      results: Object,
+      chose: Array,
       socket: io('localhost:3001'),
-      poll: 'test',
     };
   },
   mounted() {
-    this.socket.emit('poll', this.poll);
-    this.socket.on('reallyimportantupdate', update => {
-      this.test = update;
+    this.socket.emit('poll', this.$route.params.id);
+    this.socket.on('pollData', poll => {
+      this.question = poll.question;
+      this.options = poll.options;
+      this.chose = poll.chose;
+    });
+    this.socket.on('updateResults', results => {
+      this.chose = results;
     });
   },
   methods: {
@@ -34,8 +48,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-div {
-  margin-top: 100px;
-}
-</style>
+<style lang="scss" scoped></style>

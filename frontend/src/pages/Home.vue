@@ -2,6 +2,7 @@
   <div :style="{ height: `${windowHeight}px` }" class="container">
     <div :style="{ marginTop: `${browserH}px` }" class="content">
       <h1>Poll Time</h1>
+      {{ location }}
       <p>Create a poll and see the results in real time!</p>
       <router-link to="create">Get started</router-link>
     </div>
@@ -16,6 +17,7 @@ export default {
     return {
       browserH: '0',
       windowHeight: '100vh',
+      location: '',
     };
   },
   computed: {
