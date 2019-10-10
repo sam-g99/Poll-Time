@@ -16,6 +16,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
+app.io = io;
 
 // Routes
 app.get('/', (req, res) => {
@@ -23,16 +24,27 @@ app.get('/', (req, res) => {
 });
 app.use('/', require('./routes/polls'));
 
+const Poll = require('./database/models/poll');
+const Vote = require('./database/models/vote');
+
 io.on('connection', socket => {
-  socket.on('poll', data => {
-    console.log(data);
-    socket.join(data);
+  socket.on('poll', async pollId => {
+    const pollQuery = await Poll.findOne({
+      where: { pollId }
+    });
+    const resultQuery = await Vote.findAll({
+      where: { pollId }
+    });
+    const { question, options } = pollQuery;
+    const chose = resultQuery.map(r => r.chose);
+    const pollData = {
+      question,
+      options,
+      chose
+    };
+    socket.join(pollId);
+    socket.emit('pollData', pollData);
     // eslint-disable-next-line dot-notation
-    const clients = io.sockets.adapter.rooms['test'].sockets;
-    const numClients =
-      typeof clients !== 'undefined' ? Object.keys(clients).length : 0;
-    console.log(numClients);
-    io.to('test').emit('reallyimportantupdate', numClients);
   });
 
   console.log('a user is connected');

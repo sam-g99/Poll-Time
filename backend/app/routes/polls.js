@@ -45,6 +45,7 @@ router.post('/create-poll', async (req, res) => {
 // VIEW
 
 router.get('/view-poll', async (req, res) => {
+  // eslint-disable-next-line dot-notation
   const { pollId } = req.query;
   Poll.findOne({
     where: { pollId }
@@ -68,16 +69,23 @@ router.get('/view-poll', async (req, res) => {
 // ANSWER
 
 router.post('/answer-poll', async (req, res) => {
+  console.log('hit');
   const { chose, pollId } = req.body;
   Poll.findOne({
     where: { pollId }
   }).then(poll => {
     if (poll) {
       Vote.create({
-        chose, // change to answer
+        chose,
         pollId
-      }).then(() => {
-        res.status(201).send(`Your answer (${chose}) has been added!`);
+      }).then(data => {
+        Vote.findAll({
+          where: { pollId }
+        }).then(votes => {
+          res.status(201).send({ success: true });
+          const answers = votes.map(r => r.chose);
+          req.app.io.to(pollId).emit('updateResults', answers);
+        });
       });
     } else {
       res

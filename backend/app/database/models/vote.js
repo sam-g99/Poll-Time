@@ -1,10 +1,10 @@
-const { STRING } = require('sequelize');
+const { STRING, INTEGER } = require('sequelize');
 
 const database = require('..');
 
 const Vote = database.define('Vote', {
   chose: {
-    type: STRING
+    type: INTEGER
   },
   pollId: {
     type: STRING
