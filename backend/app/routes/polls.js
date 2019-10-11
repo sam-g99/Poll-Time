@@ -9,6 +9,7 @@ const shortid = require('shortid');
 
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
+const rateLimit = require('express-rate-limit');
 const Poll = require('../database/models/poll');
 const Vote = require('../database/models/vote');
 
@@ -66,9 +67,26 @@ router.get('/view-poll', async (req, res) => {
   });
 });
 
-// ANSWER
+function countPollResults(options, votes) {
+  const results = [];
+  options.forEach(() => {
+    results.push(0);
+  });
+  // Counting the votes
+  votes.forEach(vote => {
+    results[vote.chose] += 1;
+  });
+  return results;
+}
+// VOTE
 
-router.post('/answer-poll', async (req, res) => {
+const voteLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50,
+  message: 'Rate Limit'
+});
+
+router.post('/answer-poll', voteLimiter, async (req, res) => {
   console.log('hit');
   const { chose, pollId } = req.body;
   Poll.findOne({
@@ -83,8 +101,9 @@ router.post('/answer-poll', async (req, res) => {
           where: { pollId }
         }).then(votes => {
           res.status(201).send({ success: true });
-          const answers = votes.map(r => r.chose);
-          req.app.io.to(pollId).emit('updateResults', answers);
+          const results = countPollResults(poll.options, votes);
+          console.log(results);
+          req.app.io.to(pollId).emit('updateResults', results);
         });
       });
     } else {
@@ -101,7 +120,6 @@ router.get('/poll-results', async (req, res) => {
     where: { pollId }
   }).then(votes => {
     const answers = votes.map(r => r.chose);
-    console.log(answers.join(' '));
   });
   res.status(201).send('results');
 });

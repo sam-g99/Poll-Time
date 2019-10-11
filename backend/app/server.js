@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const slowDown = require('express-slow-down');
 
 const app = express(); // Define express app
 const http = require('http').Server(app);
@@ -10,12 +11,19 @@ const io = require('socket.io')(http);
 const { server } = require('./config');
 const database = require('./database');
 
+const speedLimiter = slowDown({
+  windowMs: 15 * 60 * 1000,
+  delayAfter: 100,
+  delayMs: 500
+});
+
 // Middleware
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
+app.use(speedLimiter);
 app.io = io;
 
 // Routes
@@ -36,11 +44,19 @@ io.on('connection', socket => {
       where: { pollId }
     });
     const { question, options } = pollQuery;
-    const chose = resultQuery.map(r => r.chose);
+    const results = [];
+    // Setting up array
+    options.forEach(() => {
+      results.push(0);
+    });
+    // Counting the votes
+    resultQuery.forEach(vote => {
+      results[vote.chose] += 1;
+    });
     const pollData = {
       question,
       options,
-      chose
+      results
     };
     socket.join(pollId);
     socket.emit('pollData', pollData);
