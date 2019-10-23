@@ -1,69 +1,63 @@
 <template>
-  <div :style="{ height: `${windowHeight}px` }" class="container">
-    <div :style="{ marginTop: `${browserH}px` }" class="content">
-      <h1>Poll Time</h1>
-      {{ location }}
-      <p>Create a poll and see the results in real time!</p>
-      <router-link to="create">Get started</router-link>
-    </div>
+  <div class="app-container">
+    <Logo />
+    <p>Create polls and see them update in real time!</p>
+    <LinkButton page="create" text="Get Started" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import Logo from '@/components/Logo';
+import LinkButton from '@/components/interaction/LinkButton';
 
 export default {
+  components: { Logo, LinkButton },
   data: () => {
-    return {
-      browserH: '0',
-      windowHeight: '100vh',
-      location: '',
-    };
+    return {};
   },
   computed: {
     ...mapState(['mapped']),
   },
-  mounted() {
-    this.browserH = window.innerHeight - window.outerHeight;
-    this.windowHeight = window.innerHeight;
-    window.addEventListener('resize', () => {
-      this.windowHeight = document.documentElement.clientHeight;
-      this.browserH = window.innerHeight - window.outerHeight;
-    });
-  },
 };
 </script>
 
+<style lang="scss">
+.content {
+  height: 100%;
+
+  @include breakpoint($desktop) {
+    height: auto;
+  }
+}
+</style>
+
 <style lang="scss" scoped>
-.container {
+.app-container {
   align-items: center;
   display: flex;
-  flex-flow: column;
-  height: 100vh;
-  justify-content: center;
-  min-height: 400px;
-  padding: 5px;
-  width: 100%;
+  height: 100%;
+  text-align: center;
 }
 
-.content {
-  align-items: center;
+p {
+  color: white;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 30px;
+
+  @include breakpoint(370) {
+    font-size: 25px;
+    line-height: 40px;
+  }
+
+  @include breakpoint(500) {
+    font-size: 25px;
+  }
+}
+
+div {
   display: flex;
   flex-flow: column;
-  text-align: center;
-
-  h1 {
-    font-size: 32px;
-    margin-bottom: 20px;
-  }
-
-  a {
-    background: $blue;
-    color: white;
-    font-size: 26px;
-    margin-top: 20px;
-    padding: 10px;
-    text-decoration: none;
-  }
 }
 </style>

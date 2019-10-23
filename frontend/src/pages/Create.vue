@@ -1,14 +1,15 @@
 <template>
-  <div>
+  <div class="app-container">
     <div v-if="!submitted" class="creation-container">
       <h1>Poll Creation</h1>
       <input
         id="question"
+        class="question-input"
         type="text"
         name="question"
         autocomplete="off"
         placeholder="Enter your question"
-        @keyup="registerQuestion"
+        @blur="registerQuestion"
       />
       <div class="options">
         <input
@@ -20,12 +21,10 @@
           autocomplete="off"
           placeholder="Enter your option"
           @keyup="updateOption(index, $event)"
+          @click="checkOption(index)"
         />
       </div>
-      <button @click="addOption">add option</button><br />
-      <button class="button-create-poll" @click="createPoll">
-        Create Poll
-      </button>
+      <RegButton text="Create Poll" :action="createPoll" />
     </div>
     <PollInfo v-if="submitted" :pollId="pollId" :creatorCode="creatorCode" />
   </div>
@@ -33,11 +32,13 @@
 
 <script>
 import { mapState } from 'vuex';
-import PollInfo from '@/components/PollInfo';
+import PollInfo from '@/components/alt-views/PollInfo';
+import RegButton from '@/components/interaction/RegButton';
 
 export default {
   components: {
     PollInfo,
+    RegButton,
   },
   data: () => {
     return {
@@ -67,6 +68,11 @@ export default {
         this.alertUser('You can only have 6 options.');
       }
     },
+    checkOption(index) {
+      if (index + 1 === this.options.length) {
+        this.addOption();
+      }
+    },
     updateOption(index, event) {
       this.options[index] = event.target.value;
     },
@@ -74,7 +80,8 @@ export default {
       this.axios
         .post(`${this.api}create-poll`, {
           question: this.question,
-          options: this.options,
+          // eslint-disable-next-line eqeqeq
+          options: this.options.filter(o => o != ''),
         })
         .then(r => {
           this.pollId = r.data.pollId;
@@ -94,6 +101,7 @@ export default {
 input {
   background: #f1f1f1;
   border: none;
+  border-radius: 5px;
   color: #525151;
   display: block;
   font-size: 16px;
@@ -104,26 +112,22 @@ input {
   width: 100%;
 }
 
+.question-input {
+  background: #fbfbfb;
+  border: 1px solid #c6c6c6;
+  font-size: 20px;
+  font-weight: 400;
+}
+
 ::placeholder {
   color: #525151;
 }
 
 .creation-container {
+  flex-flow: column;
   margin: 0 auto;
   margin-top: 100px;
   max-width: 600px;
-
-  .button-create-poll {
-    background: $green;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: 500;
-    margin-top: 10px;
-    outline: none;
-    padding: 10px;
-    width: 100%;
-  }
+  widows: 100%;
 }
 </style>
