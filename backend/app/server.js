@@ -13,7 +13,7 @@ const database = require('./database');
 
 const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000,
-  delayAfter: 100,
+  delayAfter: 150,
   delayMs: 500
 });
 
@@ -35,6 +35,7 @@ app.use('/', require('./routes/polls'));
 const Poll = require('./database/models/poll');
 const Vote = require('./database/models/vote');
 
+// This is for making the sockets for the poll room, decided it was fine to keep in server.js
 io.on('connection', socket => {
   socket.on('poll', async pollId => {
     const pollQuery = await Poll.findOne({
@@ -45,11 +46,11 @@ io.on('connection', socket => {
     });
     const { question, options } = pollQuery;
     const results = [];
-    // Setting up array
+    // Setting up array of options
     options.forEach(() => {
       results.push(0);
     });
-    // Counting the votes
+    // Counting the votes for each option
     resultQuery.forEach(vote => {
       results[vote.chose] += 1;
     });
@@ -58,6 +59,7 @@ io.on('connection', socket => {
       options,
       results
     };
+    // Joining a room for the poll
     socket.join(pollId);
     socket.emit('pollData', pollData);
     // eslint-disable-next-line dot-notation

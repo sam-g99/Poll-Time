@@ -17,7 +17,23 @@ const Vote = require('../database/models/vote');
 
 router.post('/create-poll', async (req, res) => {
   // Setting up inputs and Id
-  const { question, options } = req.body;
+  const { question } = req.body;
+  let { options } = req.body;
+  if (question === null) {
+    res.status(400).send({
+      title: 'Question Blank',
+      message: "You didn't input a question",
+      type: 'bad'
+    });
+  }
+  options = options.filter(o => o.trim() !== '');
+  if (!options || options.length < 2) {
+    res.status(400).send({
+      title: 'Options Blank',
+      message: 'Please put in at least 2 options',
+      type: 'bad'
+    });
+  }
   const pollId = shortid.generate();
   const creatorCode = crypto.randomBytes(15).toString('hex');
   // We need to protect those creator codes ;)
@@ -37,9 +53,8 @@ router.post('/create-poll', async (req, res) => {
     // Success
     .then(() => res.status(201).send({ pollId, creatorCode }))
     // Error
-    .catch(error => {
-      res.status(400);
-      console.log(error);
+    .catch(() => {
+      res.status(500);
     });
 });
 
@@ -54,7 +69,7 @@ router.get('/view-poll', async (req, res) => {
     // Successfully found
     if (poll) {
       const { question, options } = poll;
-      res.status(201).send({ question, options });
+      res.status(200).send({ question, options });
     }
     // Poll was not found
     else {
@@ -81,8 +96,8 @@ function countPollResults(options, votes) {
 // VOTE
 
 const voteLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50,
+  windowMs: 5 * 60 * 1000, // 15 minutes
+  max: 100,
   message: 'Rate Limit'
 });
 
@@ -96,14 +111,18 @@ router.post('/answer-poll', voteLimiter, async (req, res) => {
       Vote.create({
         chose,
         pollId
-      }).then(data => {
+      }).then(() => {
         Vote.findAll({
           where: { pollId }
         }).then(votes => {
-          res.status(201).send({ success: true });
-          const results = countPollResults(poll.options, votes);
-          console.log(results);
-          req.app.io.to(pollId).emit('updateResults', results);
+          // If everything works then it will send the vote to the socket room to update it for everyone
+          if (votes) {
+            res.status(201).send({ success: true });
+            const results = countPollResults(poll.options, votes);
+            req.app.io.to(pollId).emit('updateResults', results);
+          } else {
+            res.status(500).send('Unknown error');
+          }
         });
       });
     } else {
@@ -112,16 +131,6 @@ router.post('/answer-poll', voteLimiter, async (req, res) => {
         .send('Sorry the poll you are trying to answer to does not exist');
     }
   });
-});
-// RESULTS
-router.get('/poll-results', async (req, res) => {
-  const { pollId } = req.body;
-  Vote.findAll({
-    where: { pollId }
-  }).then(votes => {
-    const answers = votes.map(r => r.chose);
-  });
-  res.status(201).send('results');
 });
 
 // DELETE
