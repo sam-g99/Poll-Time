@@ -13,14 +13,16 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      component: Home,
-    },
-    {
-      path: '/create',
       component: Create,
     },
     {
-      path: '/poll/:id',
+      path: '/poll/:id/',
+      name: 'poll',
+      component: Poll,
+    },
+    {
+      path: '/results/:id',
+      name: 'results',
       component: Poll,
     },
   ],

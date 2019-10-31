@@ -14,14 +14,13 @@ export default {
 <style lang="scss" scoped>
 a {
   background: white;
-  border-radius: 5px;
   color: #3f93e0;
   display: block;
   font-size: 26px;
   font-weight: 500;
   margin-bottom: 10px;
   margin-top: auto;
-  padding: 10px;
+  padding: 15px;
   text-decoration: none;
   width: 95%;
 

@@ -7,9 +7,15 @@
           class="percentage"
           :style="{ width: `${percentages[index]}%` }"
         ></div>
-        {{ options[index] }} <b>{{ result }}</b>
+        <p :id="`hello${index}`">
+          {{ options[index] }} <b>{{ result }}</b>
+        </p>
       </div>
     </div>
+    <p class="real-time-message">
+      I you would like to see the poll update in real time just share it and
+      watch this page :)
+    </p>
   </div>
 </template>
 
@@ -58,6 +64,10 @@ export default {
 .app-container {
   max-width: 600px;
 }
+p {
+  position: relative;
+  z-index: 20;
+}
 
 .bar {
   border: 1px solid rgb(214, 214, 214);
@@ -67,7 +77,7 @@ export default {
   padding: 10px;
   position: relative;
   width: 100%;
-
+  z-index: 1;
   .percentage {
     background: $blue;
     height: 100%;
@@ -75,7 +85,11 @@ export default {
     position: absolute;
     top: 0;
     transition-duration: 0.1s;
-    z-index: -1;
+    z-index: 1;
   }
+}
+.real-time-message {
+  font-weight: 600;
+  margin-top: 20px;
 }
 </style>

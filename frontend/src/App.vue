@@ -1,8 +1,8 @@
 <template>
   <div id="App">
     <Alert />
-    <div :style="{ height: `${windowHeight}px` }" class="container">
-      <div :style="{ marginTop: `${browserH}px` }" class="content">
+    <div class="container">
+      <div class="content">
         <router-view></router-view>
       </div>
     </div>
@@ -24,7 +24,6 @@ export default {
   mounted() {
     const desktop = 800;
     const browser = () => {
-      console.log(window.innerWidth);
       if (window.innerWidth >= desktop) {
         this.browserH = window.innerHeight - window.outerHeight;
       } else {
@@ -45,22 +44,16 @@ export default {
 #App {
   background: linear-gradient(123.69deg, #6db6fa 70%, #7cbdfa 100%);
 }
-
 .container {
-  align-items: center;
-  display: flex;
-  flex-flow: column;
-  height: 100vh;
-  justify-content: center;
-  min-height: 400px;
-  padding: 5px;
-  width: 100%;
+  padding: 10px;
+  padding-bottom: 50px;
 }
-
 .content {
   align-items: center;
   display: flex;
   flex-flow: column;
+  justify-content: center;
   width: 100%;
+  min-height: 100vh;
 }
 </style>
